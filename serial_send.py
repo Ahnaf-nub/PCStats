@@ -1,81 +1,52 @@
 import serial
 import psutil
 import time
-import serial.tools.list_ports
-import platform
 from datetime import datetime
+import serial.tools.list_ports
 
-# Detect the available serial ports
+# Detect available serial port
 def detect_serial_port():
-    system_platform = platform.system().lower()
-    available_ports = list(serial.tools.list_ports.comports())
-
-    if system_platform == 'windows':
-        # On Windows, the COM ports will be listed as "COMx"
-        for port, desc, _ in available_ports:
-            if 'usb' in desc.lower():
-                return port  # Return the first USB serial port found
-
-    elif system_platform == 'linux' or system_platform == 'darwin':
-        # On Linux and macOS, the serial ports will typically be like /dev/ttyUSBx or /dev/ttyACMx
-        for port, desc, _ in available_ports:
-            if 'usb' in desc.lower():
-                return port  # Return the first USB serial port found
-
-    # If no serial port is found, return None
+    ports = list(serial.tools.list_ports.comports())
+    for port in ports:
+        if "USB" in port.description or "COM" in port.description:
+            return port.device
     return None
 
-# Get system stats (CPU usage, free memory, total memory, RAM usage percentage, disk usage, time, and date)
+# Get system stats
 def get_system_stats():
-    # Get CPU usage percentage
     cpu_usage = psutil.cpu_percent(interval=1)
-
-    # Get free memory in MB
-    mem_free = psutil.virtual_memory().available / 1024 / 1024
-
-    # Get total memory in MB
-    mem_total = psutil.virtual_memory().total / 1024 / 1024
-
-    # Get RAM usage percentage
+    mem_free = psutil.virtual_memory().available / 1024 / 1024  # in MB
     ram_usage = psutil.virtual_memory().percent
-
-    # Get disk usage percentage
     disk_usage = psutil.disk_usage('/').percent
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M")
+    current_day = datetime.now().strftime("%A")
+    return cpu_usage, mem_free, ram_usage, disk_usage, current_time, current_day
 
-    # Get current time and date
-    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    return cpu_usage, mem_free, mem_total, ram_usage, disk_usage, current_time
-
-# Send data to Arduino
-def send_data_to_arduino(ser, cpu_usage, mem_free, mem_total, ram_usage, disk_usage, current_time):
-    data = f"{cpu_usage},{mem_free},{mem_total},{ram_usage},{disk_usage},{current_time}\n"  # Format the data
-    ser.write(data.encode())  # Send the data to the Arduino over serial
+# Send data over serial
+def send_data(ser):
+    cpu_usage, mem_free, ram_usage, disk_usage, current_time, current_day = get_system_stats()
+    data = f"{cpu_usage},{mem_free},{ram_usage},{disk_usage},{current_time},{current_day}\n"
+    print(f"Sending: {data.strip()}")  # Debug output
+    ser.write(data.encode())  # Send data to Arduino
 
 def main():
-    # Detect the serial port automatically
     port = detect_serial_port()
-    
-    if port is None:
-        print("No compatible serial device found.")
+    if not port:
+        print("No serial port found!")
         return
 
-    print(f"Found device on {port}.")
-    
-    # Open the serial port
     ser = serial.Serial(port, 9600, timeout=1)
-    time.sleep(2)  # Wait for the connection to establish
+    time.sleep(2)  # Allow time for the connection to stabilize
 
+    print(f"Connected to {port}")
     try:
         while True:
-            cpu_usage, mem_free, mem_total, ram_usage, disk_usage, current_time = get_system_stats()
-            print(f"Sending Data: CPU Usage: {cpu_usage}%, Free Mem: {mem_free} MB, Total Mem: {mem_total} MB, RAM Usage: {ram_usage}%, Disk Usage: {disk_usage}%, Time: {current_time}")
-            send_data_to_arduino(ser, cpu_usage, mem_free, mem_total, ram_usage, disk_usage, current_time)
-            time.sleep(1)  # Send data every 1 second
+            send_data(ser)
+            time.sleep(2)  # Send data every 2 seconds
     except KeyboardInterrupt:
-        print("\nProgram interrupted by user.")
+        print("\nExiting program.")
     finally:
-        ser.close()  # Close the serial port when done
+        ser.close()
 
 if __name__ == "__main__":
     main()
