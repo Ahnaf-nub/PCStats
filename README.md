@@ -1,4 +1,4 @@
-#PCStats
+# PCStats
 
 This project combines a Pomodoro timer, system resource stats display, and animated GIF playback on an OLED screen. It also includes a buzzer for alerts when the Pomodoro timer completes.
 
