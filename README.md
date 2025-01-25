@@ -2,7 +2,7 @@
 
 This project combines a Pomodoro timer, system resource stats display, and animated GIF playback on an OLED screen. It also includes a buzzer for alerts when the Pomodoro timer completes.
 
-## Features
+## Features:
 
 ### 1. **Pomodoro Timer**
 - Displays a countdown timer for the Pomodoro technique (25-minute focus session).
@@ -24,8 +24,12 @@ This project combines a Pomodoro timer, system resource stats display, and anima
 - Switch between modes using a button.
   - Modes: System Stats, Pomodoro Timer, GIF Playback.
 - Stops the buzzer sound when switching modes.
+
 ## Hardware
 - Xiao ESP32 s3 microcontroller.
 - OLED display (SH1106).
 - Passive buzzer.
 - Button for mode switching.
+
+
+https://photos.app.goo.gl/kBdTVc8TDr42ga2S6
