@@ -2,6 +2,8 @@
 
 This project combines a Pomodoro timer, system resource stats display, and animated GIF playback on an OLED screen. It also includes a buzzer for alerts when the Pomodoro timer completes.
 
+Video Demo: https://www.youtube.com/shorts/HfFqaYeqmKY
+
 ## Features:
 
 ### 1. **Pomodoro Timer**
@@ -30,6 +32,7 @@ This project combines a Pomodoro timer, system resource stats display, and anima
 - OLED display (SH1106).
 - Passive buzzer.
 - Button for mode switching.
-
-
-https://photos.app.goo.gl/kBdTVc8TDr42ga2S6
+  
+# Some Pictures:
+![IMG_20250131_120938](https://github.com/user-attachments/assets/257e5342-daf3-4c35-bfd2-7050e4aea4fb)
+![IMG_20250124_234119](https://github.com/user-attachments/assets/db083d31-11a9-491f-992f-6dd4f274a289)
